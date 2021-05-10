@@ -1,10 +1,17 @@
 
 public class Aluno {
 	
+	private int id;
 	private int RA;
 	private String Nome;
 	private String Curso;
 	private String Email;
+	
+	private static int count = 0; 
+	
+	public Aluno() {
+		  id = ++count;
+	}
 	
 	public int getRA() {
 		return RA;

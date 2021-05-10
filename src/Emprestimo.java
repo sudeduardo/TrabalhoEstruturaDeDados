@@ -1,7 +1,11 @@
 import java.text.DateFormat;
 
 public class Emprestimo {
-
+ 	
+	public Emprestimo() {
+		  id = ++count;
+	}
+	
 	public Aluno getAluno() {
 		return aluno;
 	}
@@ -34,6 +38,14 @@ public class Emprestimo {
 		this.dataEmprestimo = dataEmprestimo;
 	}
 
+	public int getId() {
+		return id;
+	}
+
+	public void setId(int id) {
+		this.id = id;
+	}
+
 	private Aluno aluno;
 	
 	private Livro livro;
@@ -41,4 +53,8 @@ public class Emprestimo {
 	private int qtdDias;
 	
 	private DateFormat  dataEmprestimo;
+	
+	private int id; 
+	
+	private static int count = 0;
 }
