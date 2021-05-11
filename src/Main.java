@@ -1,6 +1,7 @@
 import java.util.ArrayList;
 import java.util.Scanner;
 import java.util.concurrent.Callable;
+import java.util.regex.Pattern;
 
 public class Main {
 
@@ -166,25 +167,204 @@ public class Main {
 	}
 
 	static void EditarLivro() {
+		print("Editar livros");
 
+		while (true) {
+			for (Livro livro : livros) {
+				System.out.println(livro);
+			}
+
+			int id = GetInputNumber("Digite o ID do livro que ira ser editado:");
+
+			Livro livroEdit = null;
+			for (Livro livro : livros) {
+				if (livro.getId() == id) {
+					livroEdit = livro;
+					break;
+				}
+			}
+
+			if (livroEdit != null) {
+				
+				String ano = GetInputText("Ano de Livro: ["+livroEdit.getAno()+"] ");
+				String editora = GetInputText("Editora do Livro: ["+livroEdit.getEditora()+"] ");
+				String iSBN = "";
+				
+				while (true) {
+					 iSBN = GetInputText("ISBN do Livro: ["+livroEdit.getISBN()+"]");
+					if (livroEdit.checkISBN(iSBN, livros)) {
+						break;
+					} else {
+						System.out.println("ISBN já cadastrado tente outro valor!");
+					}
+				}
+				
+				String titulo = GetInputText("Titulo do Livro: ["+livroEdit.getTitulo()+"] ");
+		
+				
+				if (GetYesOrNo("Confirma alterações neste Livro")) {
+					livroEdit.setAno(ano);
+					livroEdit.setEditora(editora);
+					livroEdit.setISBN(iSBN);
+					livroEdit.setTitulo(titulo);
+					print("Atualização feita com sucesso!");
+					print(livroEdit);
+				} else {
+					print("Alteração cancelada");
+				}
+				break;
+			}
+		}
+		
+		Wait();
 	}
 
 	// Função de Alunos
 
 	static void CadastrarAluno() {
-
+		Aluno a = new Aluno();
+		System.out.println("Cadastrando Aluno");
+		a.setNome(GetInputText("Qual o Nome do Aluno?"));
+		
+		while (true) {
+			String email = GetInputText("Qual o Email do aluno?");
+			
+			if (isEmailValid(email)) {
+				a.setEmail(email);
+				break;
+			} else {
+				System.out.println("Email inválido, tente novamente!");
+			}
+		}
+		
+		a.setCurso(GetInputText("Qual o Curso do aluno?"));
+		
+		while (true) {
+			int RA = GetInputNumber("Qual o RA do Aluno?");
+			if (a.checkRA(RA, alunos)) {
+				a.setRA(RA);
+				break;
+			} else {
+				System.out.println("RA já cadastrado, tente outro valor!");
+			}
+		}
+		
+		
+		
+		if (GetYesOrNo("Confirmar Cadastro deste Aluno?\n" + a)) {
+			alunos.add(a);
+			System.out.println("Aluno Cadastrado com sucesso!");
+		} else {
+			System.out.println("Operação Cancelada!");
+		}
+		Wait();
 	}
 
 	static void RemoverAluno() {
+		print("Remover Alunos");
 
+		while (true) {
+			for (Aluno aluno : alunos) {
+				System.out.println(aluno);
+			}
+
+			int id = GetInputNumber("Digite o ID do Aluno que ira ser excluido:");
+
+			Aluno alunoDelete = null;
+			for (Aluno aluno : alunos) {
+				if (aluno.getId() == id) {
+					alunoDelete = aluno;
+					break;
+				}
+			}
+
+			if (alunoDelete != null) {
+				if (GetYesOrNo("Confirmar Exclusão deste Aluno?\n" + alunoDelete)) {
+					alunos.remove(alunoDelete);
+					print("Exclusão feita com sucesso");
+				} else {
+					print("Exclusão cancelada");
+				}
+				break;
+			}
+		}
+		Wait();
 	}
 
 	static void ListarAluno() {
-
+		print("Listando Alunos:");
+		for (Aluno aluno : alunos) {
+			System.out.println(aluno);
+		}
+		Wait();
 	}
 
 	static void EditarAluno() {
+		print("Editar Aluno");
 
+		while (true) {
+			for (Aluno aluno : alunos) {
+				print(aluno);
+			}
+
+			int id = GetInputNumber("Digite o ID do Aluno que ira ser editado:");
+
+			Aluno alunoEdit = null;
+			for (Aluno aluno : alunos) {
+				if (aluno.getId() == id) {
+					alunoEdit = aluno;
+					break;
+				}
+			}
+
+			if (alunoEdit != null) {
+				
+				String curso = GetInputText("Curso do Aluno: ["+alunoEdit.getCurso()+"])");
+				
+				String email =  "";				
+				while (true) {
+					email = GetInputText("Email do Aluno: ["+alunoEdit.getEmail()+"])");
+					
+					if (isEmailValid(email)) {
+						break;
+					} else {
+						System.out.println("Email inválido, tente novamente!");
+					}
+				}
+				
+				
+				String nome =  GetInputText("Nome do Aluno: ["+alunoEdit.getNome()+"])");
+				
+				
+				
+				
+				int ra = 0;
+				
+				while (true) {
+					ra = GetInputNumber("RA do Livro: ["+alunoEdit.getRA()+"]");
+					if (alunoEdit.checkRA(ra, alunos)) {
+						break;
+					} else {
+						System.out.println("RA já cadastrado, tente outro valor!");
+					}
+				}
+				
+				
+				if (GetYesOrNo("Confirma alterações neste Aluno")) {
+					alunoEdit.setCurso(curso);
+					alunoEdit.setEmail(email);
+					alunoEdit.setNome(nome);
+					alunoEdit.setRA(ra);
+					print("Atualização feita com sucesso!");
+					print(alunoEdit);
+				} else {
+					print("Alteração cancelada");
+				}
+				break;
+			}
+		}
+		
+		Wait();
 	}
 
 	// Função Emprestimos
@@ -230,7 +410,9 @@ public class Main {
 
 				Scanner input = new Scanner(System.in);
 				String s = input.nextLine();
-				return s;
+				if(!s.trim().equals("")) {
+					return s;
+				}
 			} catch (Exception ex) {
 				System.out.println("Erro de Entrada, Tente outro valor!");
 			}
@@ -266,7 +448,16 @@ public class Main {
 	static void print(String txt) {
 		System.out.println(txt);
 	}
+	
+	static void print(Object obj) {
+		System.out.println(obj);
+	}
 
+	static boolean isEmailValid(String email) {
+	    final Pattern EMAIL_REGEX = Pattern.compile("[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?", Pattern.CASE_INSENSITIVE);
+	    return EMAIL_REGEX.matcher(email).matches();
+	}
+	
 	static void seeds() {
 
 		for (int i = 0; i < 9; i++) {
