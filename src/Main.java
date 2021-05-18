@@ -1,3 +1,4 @@
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Scanner;
 import java.util.concurrent.Callable;
@@ -7,7 +8,7 @@ public class Main {
 
 	static ArrayList<Aluno> alunos = new ArrayList<Aluno>();
 	static ArrayList<Livro> livros = new ArrayList<Livro>();
-	static ArrayList<Emprestimo> emprestimo = new ArrayList<Emprestimo>();
+	static ArrayList<Emprestimo> emprestimos = new ArrayList<Emprestimo>();
 
 	public static void main(String[] args) {
 		seeds();
@@ -51,10 +52,13 @@ public class Main {
 				ListarLivroEmprestado();
 				break;
 			case 12:
-				ListarEmprestimoDeUmAluno();
+				ListarEmprestimoAtrasado();
 				break;
 			case 13:
-				DeletarUmEmprestimo();
+				ListarEmprestimoDeUmAluno();
+				break;
+			case 14:
+				RemoverUmEmprestimo();
 				break;
 			default:
 				System.out.println("Opção Invalida, Tente Novamente!");
@@ -93,10 +97,11 @@ public class Main {
 		System.out.println("* 10- Devolver Livro                              *");
 		System.out.println("* 11- Listar Emprestimo                           *");
 		System.out.println("* 12- Listar Emprestimo Atrasado                  *");
-		System.out.println("* 12- Listar Emprestimo de Um Aluno               *");
-		System.out.println("* 13- Deletar um Emprestimo                       *");
+		System.out.println("* 13- Listar Emprestimo de Um Aluno               *");
+		System.out.println("* 14- Deletar um Emprestimo                       *");
 		System.out.println("***************************************************");
 	}
+	
 	// Funções Livros
 
 	static void CadastrarLivro() {
@@ -185,23 +190,22 @@ public class Main {
 			}
 
 			if (livroEdit != null) {
-				
-				String ano = GetInputText("Ano de Livro: ["+livroEdit.getAno()+"] ");
-				String editora = GetInputText("Editora do Livro: ["+livroEdit.getEditora()+"] ");
+
+				String ano = GetInputText("Ano de Livro: [" + livroEdit.getAno() + "] ");
+				String editora = GetInputText("Editora do Livro: [" + livroEdit.getEditora() + "] ");
 				String iSBN = "";
-				
+
 				while (true) {
-					 iSBN = GetInputText("ISBN do Livro: ["+livroEdit.getISBN()+"]");
+					iSBN = GetInputText("ISBN do Livro: [" + livroEdit.getISBN() + "]");
 					if (livroEdit.checkISBN(iSBN, livros)) {
 						break;
 					} else {
 						System.out.println("ISBN já cadastrado tente outro valor!");
 					}
 				}
-				
-				String titulo = GetInputText("Titulo do Livro: ["+livroEdit.getTitulo()+"] ");
-		
-				
+
+				String titulo = GetInputText("Titulo do Livro: [" + livroEdit.getTitulo() + "] ");
+
 				if (GetYesOrNo("Confirma alterações neste Livro")) {
 					livroEdit.setAno(ano);
 					livroEdit.setEditora(editora);
@@ -215,20 +219,21 @@ public class Main {
 				break;
 			}
 		}
-		
+
 		Wait();
 	}
 
+	
 	// Função de Alunos
 
 	static void CadastrarAluno() {
 		Aluno a = new Aluno();
 		System.out.println("Cadastrando Aluno");
 		a.setNome(GetInputText("Qual o Nome do Aluno?"));
-		
+
 		while (true) {
 			String email = GetInputText("Qual o Email do aluno?");
-			
+
 			if (isEmailValid(email)) {
 				a.setEmail(email);
 				break;
@@ -236,9 +241,9 @@ public class Main {
 				System.out.println("Email inválido, tente novamente!");
 			}
 		}
-		
+
 		a.setCurso(GetInputText("Qual o Curso do aluno?"));
-		
+
 		while (true) {
 			int RA = GetInputNumber("Qual o RA do Aluno?");
 			if (a.checkRA(RA, alunos)) {
@@ -248,9 +253,7 @@ public class Main {
 				System.out.println("RA já cadastrado, tente outro valor!");
 			}
 		}
-		
-		
-		
+
 		if (GetYesOrNo("Confirmar Cadastro deste Aluno?\n" + a)) {
 			alunos.add(a);
 			System.out.println("Aluno Cadastrado com sucesso!");
@@ -318,38 +321,33 @@ public class Main {
 			}
 
 			if (alunoEdit != null) {
-				
-				String curso = GetInputText("Curso do Aluno: ["+alunoEdit.getCurso()+"])");
-				
-				String email =  "";				
+
+				String curso = GetInputText("Curso do Aluno: [" + alunoEdit.getCurso() + "])");
+
+				String email = "";
 				while (true) {
-					email = GetInputText("Email do Aluno: ["+alunoEdit.getEmail()+"])");
-					
+					email = GetInputText("Email do Aluno: [" + alunoEdit.getEmail() + "])");
+
 					if (isEmailValid(email)) {
 						break;
 					} else {
 						System.out.println("Email inválido, tente novamente!");
 					}
 				}
-				
-				
-				String nome =  GetInputText("Nome do Aluno: ["+alunoEdit.getNome()+"])");
-				
-				
-				
-				
+
+				String nome = GetInputText("Nome do Aluno: [" + alunoEdit.getNome() + "])");
+
 				int ra = 0;
-				
+
 				while (true) {
-					ra = GetInputNumber("RA do Livro: ["+alunoEdit.getRA()+"]");
+					ra = GetInputNumber("RA do Livro: [" + alunoEdit.getRA() + "]");
 					if (alunoEdit.checkRA(ra, alunos)) {
 						break;
 					} else {
 						System.out.println("RA já cadastrado, tente outro valor!");
 					}
 				}
-				
-				
+
 				if (GetYesOrNo("Confirma alterações neste Aluno")) {
 					alunoEdit.setCurso(curso);
 					alunoEdit.setEmail(email);
@@ -363,32 +361,195 @@ public class Main {
 				break;
 			}
 		}
-		
+
 		Wait();
 	}
 
+	
 	// Função Emprestimos
 
 	static void EmprestarLivro() {
+		print("Emprestando um livro");
+		
+		Emprestimo emp = new Emprestimo(); 
 
+		
+		loop1:while (true) {
+			for (Aluno aluno : alunos) {
+				print(aluno);
+			}
+
+			int id = GetInputNumber("Selecione o Id do Aluno que realiza o emprestimo:");
+
+			
+			for (Aluno aluno : alunos) {
+				if (aluno.getId() == id) {
+					
+					boolean existe_livro_em_atraso = false;
+					
+					for (Emprestimo empItem : emprestimos) {
+						if(empItem.getAluno().equals(aluno)) {
+							if(empItem.esta_atrasado()) {
+								existe_livro_em_atraso = true;
+								print("Esté aluno está com livro(s) atrasados! Ele não pode emprestar livros ");
+								break;
+							}
+						}
+					}
+					
+					
+					if(!existe_livro_em_atraso) {
+						emp.setAluno(aluno);
+						break loop1;
+					}
+				}
+			}
+		}
+		
+		loop2:while (true) {
+			for (Livro livro : livros) {
+				print(livro);
+			}
+
+			int id = GetInputNumber("Selecione o Id do Livro que sera emprestado:");
+
+			
+			for (Livro livro : livros) {
+				if (livro.getId() == id) {
+					emp.setLivro(livro);
+					break loop2;
+				}
+			}
+		}
+		
+		emp.setQtdDias(GetInputNumber("Quantos dias o livro ficara emprestado: "));
+		
+		emp.setDataEmprestimo(LocalDate.now());
+		
+		if (GetYesOrNo("Emprestar o "+emp.getLivro().getTitulo()+" para  Aluno "+emp.getAluno().getNome()+" por "+emp.getQtdDias()+" dias, a partir de "+emp.getDataEmprestimo().toString()+"?\n" +emp)) {
+			emprestimos.add(emp);
+			System.out.println("Emprestimo feito com  sucesso!");
+		} else {
+			System.out.println("Emprestimo Cancelado!");
+		}
+		Wait();
+		
 	}
 
 	static void DevolverLivroEmprestado() {
+		print("Devolver um Livro Emprestado:");
 
+		while (true) {
+			for (Emprestimo empItem : emprestimos) {
+				print(empItem);
+			}
+
+			int id = GetInputNumber("Digite o ID do Emprestimo que ira ser devolvido:");
+
+			Emprestimo emp = null;
+			for (Emprestimo empItem : emprestimos) {
+				if (empItem.getId() == id) {
+					emp = empItem;
+					break;
+				}
+			}
+
+			if (emp != null) {
+				if (GetYesOrNo("Confirmar devolução deste Emprestimo?\n" + emp)) {
+					emp.setDataDevolucao(LocalDate.now());
+					print("Devolução feita com sucesso");
+				} else {
+					print("Devolução cancelada");
+				}
+				break;
+			}
+		}
+		Wait();
 	}
 
 	static void ListarLivroEmprestado() {
+		print("Listando Emprestimo:");
+		for (Emprestimo empItem : emprestimos) {
+			print(empItem);
+		}
+		Wait();
+	}
 
+	private static void ListarEmprestimoAtrasado() {
+		
+		print("Listando Emprestimo Atrasados:");
+		for (Emprestimo empItem : emprestimos) {
+			if(empItem.esta_atrasado()) {
+				System.out.println(empItem);
+			}
+		}
+		Wait();
 	}
 
 	static void ListarEmprestimoDeUmAluno() {
+		print("Listando Emprestimo de um Aluno");
+		
+		Aluno aluno = null;
+		
+		loop:while (true) {
+			for (Aluno al : alunos) {
+				print(al);
+			}
+			
+			int id = GetInputNumber("Selecione o Id do Aluno para ver seus emprestimos:");
 
+			for (Aluno al : alunos) {
+				if (al.getId() == id) {
+					aluno = al;
+					break loop;
+				}
+			}
+		}
+		
+		print("Emprestimo do Aluno " + aluno.getNome());
+		for (Emprestimo emprestimo : emprestimos) {
+			if(emprestimo.getAluno().equals(aluno)) {
+				print(emprestimo);
+			}
+		}
+		
+		Wait();
+		
 	}
 
-	static void DeletarUmEmprestimo() {
+	static void RemoverUmEmprestimo() {
+		print("Remover um Emprestimo");
 
+		while (true) {
+			for (Emprestimo empItem : emprestimos) {
+				print(empItem);
+			}
+
+			int id = GetInputNumber("Digite o ID do Emprestimo que ira ser excluido:");
+
+			Emprestimo empDelete = null;
+			for (Emprestimo empItem : emprestimos) {
+				if (empItem.getId() == id) {
+					empDelete = empItem;
+					break;
+				}
+			}
+
+			if (empDelete != null) {
+				if (GetYesOrNo("Confirmar Exclusão deste Emprestimo?\n" + empDelete)) {
+					emprestimos.remove(empDelete);
+					print("Exclusão feita com sucesso");
+				} else {
+					print("Exclusão cancelada");
+				}
+				break;
+			}
+		}
+		Wait();
 	}
 
+	
+	
 	static int GetInputNumber(String txt) {
 		System.out.println(txt);
 		while (true) {
@@ -410,7 +571,7 @@ public class Main {
 
 				Scanner input = new Scanner(System.in);
 				String s = input.nextLine();
-				if(!s.trim().equals("")) {
+				if (!s.trim().equals("")) {
 					return s;
 				}
 			} catch (Exception ex) {
@@ -448,19 +609,22 @@ public class Main {
 	static void print(String txt) {
 		System.out.println(txt);
 	}
-	
+
 	static void print(Object obj) {
 		System.out.println(obj);
 	}
 
 	static boolean isEmailValid(String email) {
-	    final Pattern EMAIL_REGEX = Pattern.compile("[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?", Pattern.CASE_INSENSITIVE);
-	    return EMAIL_REGEX.matcher(email).matches();
+		final Pattern EMAIL_REGEX = Pattern.compile(
+				"[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?",
+				Pattern.CASE_INSENSITIVE);
+		return EMAIL_REGEX.matcher(email).matches();
 	}
+
 	
 	static void seeds() {
 
-		for (int i = 0; i < 9; i++) {
+		for (int i = 1; i <= 10; i++) {
 			Livro l = new Livro();
 			l.setTitulo("Livro " + i);
 			l.setISBN("INSB " + i);
@@ -474,6 +638,12 @@ public class Main {
 			a.setNome("Nome " + i);
 			a.setRA(i);
 			alunos.add(a);
+			Emprestimo emp = new Emprestimo();
+			emp.setAluno(a);
+			emp.setLivro(l);
+			emp.setQtdDias(i);
+			emp.setDataEmprestimo(LocalDate.now());
+			emprestimos.add(emp);
 
 		}
 	}
